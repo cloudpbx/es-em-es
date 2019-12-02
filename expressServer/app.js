@@ -1,4 +1,5 @@
 const Express = require('express');
+const app = Express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrGx2TypnqsfrZz');
@@ -55,7 +56,6 @@ io.on('connection', function (socket) {
   });
 });
 
-const app = Express();
 app.use(router);
 
 app.listen(8000, function() {
