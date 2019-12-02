@@ -1,0 +1,16 @@
+{
+  "name": "expressserver",
+  "version": "1.0.0",
+  "description": "test server",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Jason Lu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "telnyx": "^1.3.0"
+  }
+}

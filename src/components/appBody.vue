@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     test() {
-      sendMessage(this.number, this.message);
+      this.$socket.emit('sendMessage', 'hello, testing')
     }
   }
 };
