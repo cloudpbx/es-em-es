@@ -5,6 +5,8 @@ import socketio
 from aiohttp import web
 
 routes = web.RouteTableDef()
+# create a Socket.IO server and attach it to the aiohttp app.
+sio = socketio.AsyncServer(async_mode="aiohttp")
 
 
 @routes.post("/webhook/oV2KDfSKNQb1SRMGsRzJ")
@@ -30,8 +32,7 @@ if __name__ == "__main__":
     app = web.Application()
     app.add_routes(routes)
 
-    # create a Socket.IO server and attach it to the aiohttp app.
-    sio = socketio.AsyncServer(async_mode="aiohttp")
+    # Attach socket to the aiohttp app.
     sio.attach(app)
 
     web.run_app(app)
