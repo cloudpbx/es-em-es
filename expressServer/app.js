@@ -5,9 +5,13 @@ const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrG
 
 server.listen(8000);
 
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
 // Add webhook route.
 app.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", function (req, res) {
-  console.log(req);
+  console.log(req.body.from);
+  console.log(req.body.body);
   res.message("Success");
   });
 
