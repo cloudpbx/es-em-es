@@ -2,6 +2,16 @@ import Vue from "vue";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 
+// import VueSocketIO from "vue-socket.io";
+
+// Vue.use(
+//   new VueSocketIO({
+//     debug: true,
+//     connection: "http://167.71.120.177:8080/webhook/oV2KDfSKNQb1SRMGsRzJ",
+//     options: { path: "/my-app/" } //Optional options
+//   })
+// );
+
 Vue.config.productionTip = false;
 
 new Vue({

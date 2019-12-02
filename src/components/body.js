@@ -8,7 +8,9 @@ export function sendMessage(receiver, message) {
   const payload = {
     from: "+17786542857",
     to: `+1${receiver}`,
-    body: message
+    body: message,
+    delivery_status_webhook_url:
+      "http://167.71.120.177:8080/webhook/oV2KDfSKNQb1SRMGsRzJ"
   };
   request.post(
     {
