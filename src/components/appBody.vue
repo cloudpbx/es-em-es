@@ -12,7 +12,7 @@
 
 <script>
 /* eslint-disable */
-
+import {sendMessage} from './body'
 export default {
   data() {
     return {
@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     test() {
-      console.log(this.text);
+      sendMessage('testing message');
     }
   }
 };
