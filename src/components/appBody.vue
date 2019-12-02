@@ -2,9 +2,10 @@
   <v-container>
     <v-container class="grey lighten-5">
       <v-form @submit.prevent="test">
-        <v-text-field v-model="text"></v-text-field>
+        <v-text-field label="number" v-model="number"></v-text-field>
+        <v-text-field label="message" v-model="message"></v-text-field>
 
-        <v-btn color="gray" type="submit">Test</v-btn>
+        <v-btn color="gray" type="submit">Send</v-btn>
       </v-form>
     </v-container>
   </v-container>
@@ -16,12 +17,13 @@ import { sendMessage } from "./body";
 export default {
   data() {
     return {
-      text: null
+      message: null,
+      number: null
     };
   },
   methods: {
     test() {
-      sendMessage();
+      sendMessage(this.number, this.message);
     }
   }
 };

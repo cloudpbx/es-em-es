@@ -4,13 +4,12 @@ const headers = {
   "X-Profile-Secret": "oJ1ux5eIH5BXEp8ubv2CVDKQ"
 };
 
-const payload = {
-  from: "+17786542857",
-  to: "+1604355169",
-  body: "Hello, world!"
-};
-
-export function sendMessage() {
+export function sendMessage(receiver, message) {
+  const payload = {
+    from: "+17786542857",
+    to: `+1${receiver}`,
+    body: message
+  };
   request.post(
     {
       url: "https://sms.telnyx.com/messages",
