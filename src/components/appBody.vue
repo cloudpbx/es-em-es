@@ -2,15 +2,9 @@
   <div style="width:100%; height:100%">
     <v-container class="grey lighten-5">
       <messageWindow :history="selectedPhoneHistory" />
-
-      <v-form @submit.prevent="test">
-        <v-text-field v-model="text"></v-text-field>
-
-        <v-btn color="gray" type="submit">Test</v-btn>
-      </v-form>
     </v-container>
 
-    <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:0;" />
+    <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:5px;" />
   </div>
 </template>
 
@@ -30,19 +24,18 @@ export default {
   data() {
     return {
       text: null,
-      selectedNumber: '',
+      selectedNumber: ""
     };
   },
   computed: {
-    selectedPhoneHistory: function () {
+    selectedPhoneHistory: function() {
       return mockdata[this.selectedNumber];
     }
   },
   methods: {
     selectedConversation(n) {
       this.selectedNumber = n;
-    },
     }
-
+  }
 };
 </script>
