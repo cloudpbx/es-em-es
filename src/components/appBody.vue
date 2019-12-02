@@ -1,6 +1,8 @@
 <template>
   <v-container>
     <v-container class="grey lighten-5">
+    <messageWindow :history="selectedPhoneHistory" />
+
       <v-form @submit.prevent="test"
         ><v-text-field v-model="text"></v-text-field>
 
@@ -13,10 +15,18 @@
 <script>
 /* eslint-disable */
 
+import messageWindow from "./messageWindow";
+import {mockdata} from "./recieve";
+
 export default {
+  components: {
+    messageWindow
+  },
+
   data() {
     return {
-      text: null
+      text: null,
+      selectedPhoneHistory: mockdata["+15555555"],
     };
   },
   methods: {

@@ -1,4 +1,4 @@
-export default {
+export const mockdata = {
   "+15555555": [
     {
       sms_id: "8d7b47fc-be08-4820-8ce3-58fd4fe42a76",
