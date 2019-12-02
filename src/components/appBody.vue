@@ -1,26 +1,40 @@
-<template>
-  <v-container>
+<template >
+  <div style="width:100%; height:100%">
     <v-container class="grey lighten-5">
+
+      <v-form @submit.prevent="test">
+        <v-text-field v-model="text"></v-text-field>
+
     <messageWindow :history="selectedPhoneHistory" />
 
       <v-form @submit.prevent="test"
         ><v-text-field v-model="text"></v-text-field>
 
+
         <v-btn color="gray" type="submit">Test</v-btn>
       </v-form>
     </v-container>
-  </v-container>
+
+    <contactList style="position:absolute; right:250px; top:0;" />
+  </div>
 </template>
 
 <script>
 /* eslint-disable */
 
+
+
+
+
+
 import messageWindow from "./messageWindow";
+import contactList from "./contactList";
 import {mockdata} from "./recieve";
 
 export default {
   components: {
-    messageWindow
+    messageWindow,
+    contactList
   },
 
   data() {

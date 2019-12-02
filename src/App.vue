@@ -1,11 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      elevation="1"
-      color="white"
-      style="height:75px; border-bottom: 1px gray solid"
-    >
+    <v-app-bar app elevation="1" color="white" style="height:75px; border-bottom: 1px gray solid">
       <div class="d-flex align-center title">
         <b>CORVUM</b>
       </div>
