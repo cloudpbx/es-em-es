@@ -13,6 +13,7 @@ async def incoming_webhook(request: web.Request):
     return web.Response(text="Hello, world")
 
 if __name__ == "__main__":
+    print("hi")
     app = web.Application()
     app.add_routes(routes)
     web.run_app(app)
