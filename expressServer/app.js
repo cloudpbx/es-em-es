@@ -1,9 +1,7 @@
-var app = require('express')();
+const Express = require('express');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrGx2TypnqsfrZz');
-
-server.listen(8000);
 
 const router = Express.Router();
 
@@ -57,4 +55,9 @@ io.on('connection', function (socket) {
   });
 });
 
+const app = Express();
 app.use(router);
+
+app.listen(8000, function() {
+  console.log('SMS App listening on port 8000!')
+});
