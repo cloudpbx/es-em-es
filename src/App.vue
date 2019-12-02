@@ -1,60 +1,54 @@
 <template>
   <v-app>
+
     <v-app-bar
       app
-      color="primary"
-      dark
+      elevation=1
+      color="white"
+      style="height:75px; border-bottom: 1px gray solid"
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+      <div  class="d-flex align-center title">
+        <b>CORVUM</b>
       </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
+        color="gray"
       >
-        <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
+        <span class="mr-2">Name</span>
       </v-btn>
     </v-app-bar>
 
     <v-content>
-      <HelloWorld/>
+            <navBar/>
+          <appBody style="position:absolute; left:265px; top:75px"/>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import appBody from './components/appBody'
+import navBar from './components/navbar'
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld
+    appBody,
+    navBar
   },
 
-  data: () => ({
-    //
-  })
+  data () {
+    return {
+      items: [
+        { title: 'Dashboard', icon: 'mdi-view-dashboard' },
+        { title: 'Photos', icon: 'mdi-image' },
+        { title: 'About', icon: 'mdi-help-box' }
+      ],
+      right: null
+    }
+  }
 }
 </script>
