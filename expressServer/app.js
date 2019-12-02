@@ -6,7 +6,7 @@ const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrG
 const publicKey = "6JHIzNE/VcU3l6M6GJMhUaHURMJJIbRKL6CCE+e1QUg=";
 const router = Express.Router();
 
-app.io = io;
+var sock;
 
 function addRawBody(req, res, next) {
   req.setEncoding('utf8');
@@ -42,11 +42,12 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, function(request, respo
 
   console.log('Success', event.data.id);
   console.log(event.data);
-  req.app.io.emit('receiveMessage', event.data);
+  sock.emit('receiveMessage', event.data);
   response.status(200).send('Signed Webhook Received: ' + event.data.id);
 });
 
 io.on('connection', function (socket) {
+  sock = socket;
   socket.emit('newMessage', { hello: 'world' });
   socket.on('sendMessage', function (data) {
     telnyx.messages.create({
