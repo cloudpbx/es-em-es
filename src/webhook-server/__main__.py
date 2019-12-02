@@ -4,10 +4,18 @@ Receives Telnyx webhooks.
 import socketio
 from aiohttp import web
 
-routes = web.RouteTableDef()
-# create a Socket.IO server and attach it to the aiohttp app.
-sio = socketio.AsyncServer(async_mode="aiohttp")
+# Create the webhook server app.
+app = web.Application()
 
+# Websockets 
+# create a Socket.IO server and attach it to the aiohttp app.
+sio = socketio.AsyncServer(async_mode="aiohttp", cors_allowed_origins="*")
+# Attach socket to the aiohttp app.
+sio.attach(app)
+
+
+
+routes = web.RouteTableDef()
 
 @routes.post("/webhook/oV2KDfSKNQb1SRMGsRzJ")
 async def incoming_webhook(request: web.Request):
@@ -26,13 +34,9 @@ async def message(sid, data):
     session = await sio.get_session(sid)
     print('message from ', session['username'])
 
+# Add routes to app.
+app.add_routes(routes)
 
 if __name__ == "__main__":
-    # Create the webhook server app.
-    app = web.Application()
-    app.add_routes(routes)
-
-    # Attach socket to the aiohttp app.
-    sio.attach(app)
-
+    # Run the app.
     web.run_app(app)
