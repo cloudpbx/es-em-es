@@ -10,7 +10,7 @@
       </v-form>
     </v-container>
 
-    <contactList style="position:absolute; right:250px; top:0;" />
+    <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:0;" />
   </div>
 </template>
 
@@ -30,7 +30,7 @@ export default {
   data() {
     return {
       text: null,
-      selectedPhoneHistory: mockdata["+15555555"]
+      selectedNumber: '',
     };
   },
   computed: {
@@ -39,8 +39,8 @@ export default {
     }
   },
   methods: {
-    test() {
-      console.log(this.text);
+    selectedConversation(n) {
+      this.selectedNumber = n;
     },
     }
 

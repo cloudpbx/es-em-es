@@ -1,7 +1,7 @@
 <template>
   <v-card height="100%" width="300">
     <v-list v-for="n in (Object.keys(data))" :key="n">
-      <v-list-item>
+      <v-list-item @click="$emit('selected', n)">
         <v-list-item-content>
           <v-list-item-title text-center class="title">{{n}}</v-list-item-title>
           <v-list-item-content text-center>{{n[0]}}</v-list-item-content>
