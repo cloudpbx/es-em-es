@@ -3,6 +3,7 @@ const app = Express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrGx2TypnqsfrZz');
+const publicKey = "DKTKdU0IPRdKDL1RSQrcS6dMUAiJwDhd9rgsjnl20dA=";
 
 const router = Express.Router();
 
@@ -30,7 +31,7 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, function(request, respo
       request.rawBody,
       request.header('telnyx-signature-ed25519'),
       request.header('telnyx-timestamp'),
-      // publicKey
+      publicKey
     );
   } catch (e) {
     console.log('Error', e.message);
