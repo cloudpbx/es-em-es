@@ -1,13 +1,26 @@
-const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrGx2TypnqsfrZz');
+const request = require("request");
 
-export const sendMessage = (msg) => {
-    return telnyx.messages.create({
-        'from': '+17786542857', // Your Telnyx number
-        'to': '+16043551695',
-        'text': msg
-    }).then(function(response){
-      const message = response.data; // asynchronously handled
-      console.log(message);
-    });
+const headers = {
+  "X-Profile-Secret": "oJ1ux5eIH5BXEp8ubv2CVDKQ"
+};
+
+const payload = {
+  from: "+17786542857",
+  to: "+1604355169",
+  body: "Hello, world!"
+};
+
+export function sendMessage() {
+  request.post(
+    {
+      url: "https://sms.telnyx.com/messages",
+      headers: headers,
+      json: payload
+    },
+    function(err, resp, body) {
+      console.log("error:", err);
+      console.log("statusCode:", resp && resp.statusCode);
+      console.log("body:", body);
+    }
+  );
 }
-

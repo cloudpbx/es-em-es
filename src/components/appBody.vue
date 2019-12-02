@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <v-container class="grey lighten-5">
-      <v-form @submit.prevent="test"
-        ><v-text-field v-model="text"></v-text-field>
+      <v-form @submit.prevent="test">
+        <v-text-field v-model="text"></v-text-field>
 
         <v-btn color="gray" type="submit">Test</v-btn>
       </v-form>
@@ -12,7 +12,7 @@
 
 <script>
 /* eslint-disable */
-import {sendMessage} from './body'
+import { sendMessage } from "./body";
 export default {
   data() {
     return {
@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     test() {
-      sendMessage('testing message');
+      sendMessage();
     }
   }
 };
