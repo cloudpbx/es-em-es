@@ -8,12 +8,45 @@ server.listen(8000);
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-// Add webhook route.
-app.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", function (req, res) {
-  console.log(req.body.from);
-  console.log(req.body.body);
-  res.message("Success");
+
+const router = Express.Router();
+
+function addRawBody(req, res, next) {
+  req.setEncoding('utf8');
+
+  var data = '';
+
+  req.on('data', function(chunk) {
+    data += chunk;
   });
+
+  req.on('end', function() {
+    req.rawBody = data;
+
+    next();
+  });
+}
+
+router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, function(request, response) {
+  var event;
+
+  try {
+    event = telnyx.webhooks.constructEvent(
+      request.rawBody,
+      request.header('telnyx-signature-ed25519'),
+      request.header('telnyx-timestamp'),
+      // publicKey
+    );
+  } catch (e) {
+    console.log('Error', e.message);
+
+    return response.status(400).send('Webhook Error:' + e.message);
+  }
+
+  console.log('Success', event.data.id);
+
+  response.status(200).send('Signed Webhook Received: ' + event.data.id);
+});
 
 io.on('connection', function (socket) {
   socket.emit('newMessage', { hello: 'world' });
@@ -27,3 +60,5 @@ io.on('connection', function (socket) {
   });
   });
 });
+
+app.use(router);
