@@ -14,25 +14,15 @@ async def incoming_webhook(request: web.Request):
     return web.Response(text="Hello, world")
 
 
-@sio.on("custom")
-def another_event(sid, data):
-    print(sid, data)
-
+@sio.event
+async def connect(sid, environ):
+    print(environ)
+    await sio.save_session(sid, environ)
 
 @sio.event
-def connect(sid: str, environ: dict):
-    print("Connected", environ)
-    phone_number = environ.get("phoneNumber")
-    async with sio.session(sid) as session:
-        session["phoneNumber"] = phone_number
-        return True
-    raise socketio.exceptions.ConnectionRefusedError("authentication failed")
-
-
-@sio.event
-def message(sid: str, data):
-    async with sio.session(sid) as session:
-        print("message from ", session["username"])
+async def message(sid, data):
+    session = await sio.get_session(sid)
+    print('message from ', session['username'])
 
 
 if __name__ == "__main__":
