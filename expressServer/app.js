@@ -14,8 +14,8 @@ io.on('connection', function (socket) {
   socket.on('sendMessage', function (data) {
     telnyx.messages.create({
       'from': '+17786542857', // Your Telnyx number
-      'to': '+16043551695',
-      'text': data
+      'to': '+1' + data.number,
+      'text': data.message
   }).then(function(response){
     const message = response.data; // asynchronously handled
   });
