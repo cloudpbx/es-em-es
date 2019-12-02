@@ -5,9 +5,11 @@ const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrG
 
 server.listen(8000);
 
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
-});
+// Add webhook route.
+app.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", function (req, res) {
+  console.log(req);
+  res.message("Success");
+  });
 
 io.on('connection', function (socket) {
   socket.emit('newMessage', { hello: 'world' });
