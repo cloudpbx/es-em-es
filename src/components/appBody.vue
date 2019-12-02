@@ -13,13 +13,20 @@
 
 <script>
 /* eslint-disable */
-import { sendMessage } from "./body";
 export default {
   data() {
     return {
       message: null,
       number: null
     };
+  },
+  sockets: {
+    connect: function () {
+        console.log('socket connected')
+    },
+    newMessage: function (data) {
+        console.log('New message recieved' + data.hello)
+    }
   },
   methods: {
     test() {
