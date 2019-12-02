@@ -26,13 +26,19 @@ export default {
   data() {
     return {
       text: null,
-      selectedPhoneHistory: mockdata["+15555555"],
+      selectedNumber: "+44444444",
     };
+  },
+  computed: {
+    selectedPhoneHistory: function () {
+      return mockdata[this.selectedNumber];
+    }
   },
   methods: {
     test() {
       console.log(this.text);
+    },
     }
-  }
+
 };
 </script>
