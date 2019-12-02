@@ -5,10 +5,6 @@ const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrG
 
 server.listen(8000);
 
-app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-
-
 const router = Express.Router();
 
 function addRawBody(req, res, next) {
