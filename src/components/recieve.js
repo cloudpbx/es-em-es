@@ -10,7 +10,7 @@ export default {
     },
     {
       sms_id: "8d7b47fc-be08-4820-8ce3-58fd4fe42a76",
-      direction: "",
+      direction: "outbound",
       time: 1522097596060,
       //   from: "+15555555",
       //   to: "+16666666",
