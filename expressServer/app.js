@@ -50,12 +50,11 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => 
     // Handle sent messages.
     case 'message.sent':
     case 'message.finalized':
-      redisClient.rpush('list1', JSON.stringify(event.data));
+      redisClient.rpush(event.data.from + '|' + event.data.to[0].phone_number, JSON.stringify(event.data));
       io.sockets.emit('receiveMessage', event.data);
-
     // Handle received messages.
     case 'message.received':
-      redisClient.rpush('list1', JSON.stringify(event.data));
+      redisClient.rpush(event.data.to + '|' + event.data.from, JSON.stringify(event.data));
       io.sockets.emit('receiveMessage', event.data);
 
     // Lost and found.
@@ -82,7 +81,6 @@ io.on('connection', function (socket) {
       'text': data.message
   }).then(function(response){
     const message = response.data;
-    redisClient.rpush('list1', JSON.stringify(message));
     socket.emit('sentMessage', message);
   }).catch(error => console.log('Error in sending message: ' + JSON.stringify(error)))})
 });
