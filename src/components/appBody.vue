@@ -25,7 +25,12 @@ export default {
       console.log("socket connected");
     },
     receiveMessage: function(data) {
-      console.log("New message recieved" + JSON.stringify(data));
+      // console.log("New message recieved" + JSON.stringify(data));
+      console.log(`From | ${JSON.stringify(data.payload.from)}`);
+      console.log(`To | ${JSON.stringify(data.payload.to[0])}`);
+      console.log(`Sent At | ${JSON.stringify(data.payload.sent_at)}`);
+      console.log(`Received At | ${JSON.stringify(data.payload.received_at)}`);
+      console.log(`Message | ${JSON.stringify(data.payload.text)}`);
     }
   },
   methods: {
