@@ -11,7 +11,7 @@ var redis = require('redis')
 const redisPass = 'yJLT6Moy66AwvFwusmkGgHRXzSmYoTHUVG7luqnDvlpHfF6tEYY5Lb4b5dmbWS4i31EsTXj3cUn07Rs71CvcVvIaTKa4p0KCln6q1dtsGwIzbSCVXHW9QIMMXlYBBHb0glGESweTUoM9dwNt7MbvVAmKNzjN2h719HLUhwGJfHagyPGgpxGEsepsLUGXRHv8VrswHXR6B1bI0LvngU92FfiCn0hxqiOALlS4JtIDIjdRYkASkfk5XqBBiPk7PI35';
 var redisClient = redis.createClient();
 redisClient.auth(redisPass);
-redisClient.on("error", function (err) {
+redisClient.on("error", (err) => {
   console.log("Error " + err);
 });
 
@@ -31,7 +31,7 @@ function addRawBody(req, res, next) {
     next();
   });
 }
-router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, function(request, response) {
+router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => {
   var event;
   try {
     event = telnyx.webhooks.constructEvent(
@@ -74,17 +74,18 @@ app.use(router);
 
 
 io.on('connection', function (socket) {
-  redisClient.lrange( "list1", 0, -1, (messages) => { // Load messages on connect
-    socket.emit('loadMessages', messages)
+  redisClient.lrange( "list1", 0, -1, (error, messages) => { // Load messages on connect
+    socket.emit('loadMessages', messages);
   })
-  socket.on('sendMessage', function (data) {
+  socket.on('sendMessage', (data) => {
     telnyx.messages.create({
       'from': '+17786542857', // Your Telnyx number
       'to': '+1' + data.number,
       'text': data.message
   }).then(function(response){
     const message = response.data;
-    redisClient.rpush('list1', JSON.stringify(message))
+    redisClient.rpush('list1', JSON.stringify(message));
+    socket.emit('messageSent', message);
   }).catch(error => console.log('Error in sending message: ' + JSON.stringify(error)))})
 });
 
