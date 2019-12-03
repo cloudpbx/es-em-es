@@ -7,16 +7,28 @@
     />
     <v-container class="grey lighten-5">
       <messageWindow :history="selectedPhoneHistory" style="position:absolute; left:0; top:100px;" />
-      <messageInput style="position:absolute; left:0; bottom:0;" />
-      <!-- <v-form @submit.prevent="test">
-        <v-text-field label="number" v-model="number"></v-text-field>
-        <v-text-field label="message" v-model="message"></v-text-field>
+      <v-container grey lighten-2 style="position:absolute; left:0; bottom:0; display:inline-flex; align-items:center; width:70%;">
+          <v-form
+            @submit.prevent="test"
+            style="width:50%;"
+          >
+              <v-text-field label="number" :disabled="this.selectedNumber.length > 0" v-model="number"></v-text-field>
+              <v-textarea
+                v-model="message"
+                label="message"
+                filled
+                outlined
+                background-color="white"
+                rows="2"
+                row-height="20"
+              ></v-textarea>
+              <v-btn medium color="primary" type="submit">SEND</v-btn>
+          </v-form>
+      </v-container>
 
-        <v-btn color="gray" type="submit">Send</v-btn>
-      </v-form>-->
     </v-container>
 
-    <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:5px;" />
+    <contactList @selected="selectedConversation" @nothingSelected="handleNothingSelected" style="position:absolute; right:250px; top:5px;" />
   </div>
 </template>
 
@@ -24,7 +36,6 @@
 /* eslint-disable */
 
 import messageWindow from "./messageWindow";
-import messageInput from "./messageInput";
 import contactList from "./contactList";
 import selectedUser from "./selectedUser";
 import { mockdata } from "./recieve";
@@ -32,7 +43,6 @@ import { mockdata } from "./recieve";
 export default {
   components: {
     messageWindow,
-    messageInput,
     contactList,
     selectedUser
   },
@@ -43,7 +53,7 @@ export default {
       selectedNumber: "",
       selected: false,
       message: null,
-      number: null
+      number: ""
     };
   },
   computed: {
@@ -53,10 +63,17 @@ export default {
     }
   },
   methods: {
+    handleNothingSelected() {
+      this.selected = false;
+      this.number = "";
+      this.selectedNumber="";
+    },
     selectedConversation(n) {
       this.selectedNumber = n;
+      this.number = n;
     },
     test() {
+      console.log(this.message+" "+this.number);
       this.$socket.emit("sendMessage", {
         message: this.message,
         number: this.number

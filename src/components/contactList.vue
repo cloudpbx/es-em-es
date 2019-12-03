@@ -1,6 +1,6 @@
 <template>
   <v-card height="100%" width="350">
-    <v-list-item @click="test()" style="height:100px">
+    <v-list-item @click="$emit('nothingSelected', null)" style="height:100px">
       <v-list-item-avatar>
         <v-img class="grey lighten-1 white--text"></v-img>
       </v-list-item-avatar>
