@@ -1,5 +1,10 @@
 <template >
   <div style="width:100%; height:100%">
+    <selectedUser
+      :v-show="selected"
+      :number="selectedNumber"
+      style="position:absolute; left:0px; top:5px;"
+    />
     <v-container class="grey lighten-5">
       <messageWindow :history="selectedPhoneHistory" />
     </v-container>
@@ -13,22 +18,26 @@
 
 import messageWindow from "./messageWindow";
 import contactList from "./contactList";
+import selectedUser from "./selectedUser";
 import { mockdata } from "./recieve";
 
 export default {
   components: {
     messageWindow,
-    contactList
+    contactList,
+    selectedUser
   },
 
   data() {
     return {
       text: null,
-      selectedNumber: ""
+      selectedNumber: "",
+      selected: false
     };
   },
   computed: {
     selectedPhoneHistory: function() {
+      this.selected = true;
       return mockdata[this.selectedNumber];
     }
   },
