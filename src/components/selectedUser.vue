@@ -19,9 +19,7 @@ export default {
     };
   },
   methods: {
-    test() {
-      console.log("asdasda");
-    }
+    test() {}
   },
   computed: {},
   mounted() {}
