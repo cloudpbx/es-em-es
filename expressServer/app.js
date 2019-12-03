@@ -57,6 +57,7 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => 
 
     // Handle received messages.
     case 'message.received':
+      redisClient.rpush('list1', JSON.stringify(event.data));
       to = event.data.payload.to;
       io.sockets.emit('receiveMessage:'+to, event.data);
 
