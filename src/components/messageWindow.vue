@@ -77,6 +77,7 @@ export default {
   methods: {
     test() {
       console.log(this.text);
+      this.text="";
     }
   }
 };

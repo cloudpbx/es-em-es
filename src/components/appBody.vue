@@ -7,6 +7,7 @@
     />
     <v-container class="grey lighten-5">
       <messageWindow :history="selectedPhoneHistory" style="position:absolute; left:0; top:100px;" />
+      <messageInput style="position:absolute; left:0; bottom:0;"/>
     </v-container>
 
     <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:5px;" />
@@ -17,6 +18,7 @@
 /* eslint-disable */
 
 import messageWindow from "./messageWindow";
+import messageInput from "./messageInput";
 import contactList from "./contactList";
 import selectedUser from "./selectedUser";
 import { mockdata } from "./recieve";
@@ -24,6 +26,7 @@ import { mockdata } from "./recieve";
 export default {
   components: {
     messageWindow,
+    messageInput,
     contactList,
     selectedUser
   },
