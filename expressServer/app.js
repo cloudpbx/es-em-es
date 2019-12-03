@@ -15,6 +15,8 @@ redisClient.on("error", (err) => {
   console.log("Error " + err);
 });
 
+var phoneUser = {};
+
 // Receive webhooks from telnyx, and push them to sockets.
 function addRawBody(req, res, next) {
   req.setEncoding('utf8');
@@ -50,19 +52,25 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => 
     // Handle sent messages.
     case 'message.sent':
     case 'message.finalized':
+      phoneNumber = event.data.payload.from;
       redisClient.rpush('list1', JSON.stringify(event.data));
-      io.sockets.emit('receiveMessage', event.data);
 
     // Handle received messages.
     case 'message.received':
+      phoneNumber = event.data.payload.to;
       redisClient.rpush('list1', JSON.stringify(event.data));
-      io.sockets.emit('receiveMessage', event.data);
 
     // Lost and found.
     default:
+        phoneNumber = null;
         io.sockets.emit('receiveMessage:lost+found', event.data);
   }
   
+  if (phoneNumber) {
+    for(let user of phoneUser[phoneNumber]) {
+      user.send('receiveMessage', event.data)
+    }
+  }
   response.status(200).send('Signed Webhook Received: ' + event.data.id);
 });
 
@@ -81,10 +89,16 @@ io.on('connection', (socket) => {
   // Handle disconnect
   socket.on('disconnect', () => {
     socket._user.clear();
+    phoneUser[socket._user.phoneNumber].delete(socket._user);
     delete socket._user;
   });
   socket.on('phoneNumber', (data) => {
     socket._user.phoneNumber = data.phoneNumber;
+    if (!phoneUser[socket._user.phoneNumber]) {
+      phoneUser[socket._user.phoneNumber] = new Set();
+    }
+    phoneUser[socket._user.phoneNumber].add(socket._user);
+
     socket._user.loadMessages(-1);
   });
   socket.on('sendMessage', (data) => {
