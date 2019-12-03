@@ -4,6 +4,14 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrGx2TypnqsfrZz');
 const publicKey = "6JHIzNE/VcU3l6M6GJMhUaHURMJJIbRKL6CCE+e1QUg=";
+const router = Express.Router();
+var redis = require('redis')
+const redisPass = 'yJLT6Moy66AwvFwusmkGgHRXzSmYoTHUVG7luqnDvlpHfF6tEYY5Lb4b5dmbWS4i31EsTXj3cUn07Rs71CvcVvIaTKa4p0KCln6q1dtsGwIzbSCVXHW9QIMMXlYBBHb0glGESweTUoM9dwNt7MbvVAmKNzjN2h719HLUhwGJfHagyPGgpxGEsepsLUGXRHv8VrswHXR6B1bI0LvngU92FfiCn0hxqiOALlS4JtIDIjdRYkASkfk5XqBBiPk7PI35';
+var redisClient = redis.createClient();
+redisClient.auth(redisPass);
+redisClient.on("error", function (err) {
+  console.log("Error " + err);
+});
 
 // Receive webhooks from telnyx, and push them to sockets.
 const router = Express.Router();
@@ -33,7 +41,6 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, function(request, respo
     );
   } catch (e) {
     console.log('Error', e.message);
-
     return response.status(400).send('Webhook Error:' + e.message);
   }
 
@@ -42,6 +49,8 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, function(request, respo
     // Handle sent messages.
     case 'message.sent':
     case 'message.finalized':
+      redisClient.rpush('list1', JSON.stringify(event.data));
+      io.sockets.emit('receiveMessage', event.data);
       from = event.data.payload.from;
       io.sockets.emit('receiveMessage:'+from, event.data);
 
@@ -64,7 +73,6 @@ app.use(router);
 
 
 io.on('connection', function (socket) {
-  socket.emit('receiveMessage', { connected: true });
   socket.on('sendMessage', function (data) {
     telnyx.messages.create({
       'from': '+17786542857', // Your Telnyx number
@@ -72,8 +80,8 @@ io.on('connection', function (socket) {
       'text': data.message
   }).then(function(response){
     const message = response.data; // asynchronously handled
-  });
-  });
+    redisClient.rpush('list1', JSON.stringify(message));});
+  }); // TODO add .catch for error handling
 });
 
 server.listen(8000, function() {

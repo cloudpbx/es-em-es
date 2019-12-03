@@ -1,7 +1,7 @@
 var redisClient = require('redis-js');
 var Q = require('q');
 
-# Received
+// Received
 
 // Returns 'inbound' or 'outbound' depending on the presence of certain flags.
 function messageType(data) {
