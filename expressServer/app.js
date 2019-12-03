@@ -6,6 +6,7 @@ const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrG
 const publicKey = "6JHIzNE/VcU3l6M6GJMhUaHURMJJIbRKL6CCE+e1QUg=";
 const router = Express.Router();
 
+
 function addRawBody(req, res, next) {
   req.setEncoding('utf8');
 
@@ -60,6 +61,6 @@ io.on('connection', function (socket) {
 
 app.use(router);
 
-app.listen(8000, function() {
+server.listen(8000, function() {
   console.log('SMS App listening on port 8000!')
 });
