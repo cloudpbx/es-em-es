@@ -74,15 +74,18 @@ app.use(router);
 
 
 io.on('connection', function (socket) {
+  redisClient.lrange( "list1", 0, -1, (messages) => { // Load messages on connect
+    socket.emit('loadMessages', messages)
+  })
   socket.on('sendMessage', function (data) {
     telnyx.messages.create({
       'from': '+17786542857', // Your Telnyx number
       'to': '+1' + data.number,
       'text': data.message
   }).then(function(response){
-    const message = response.data; // asynchronously handled
-    redisClient.rpush('list1', JSON.stringify(message));});
-  }); // TODO add .catch for error handling
+    const message = response.data;
+    redisClient.rpush('list1', JSON.stringify(message))});
+  }).catch(error => console.log('Error in socket: ' + JSON.stringify(error)))
 });
 
 server.listen(8000, function() {

@@ -24,6 +24,9 @@ export default {
     connect: function() {
       console.log("socket connected");
     },
+    loadMessages: function(messages) {
+      // TODO load messages into some data store
+    },
     receiveMessage: function(data) {
       // console.log("New message recieved" + JSON.stringify(data));
       console.log(`From | ${JSON.stringify(data.payload.from)}`);
