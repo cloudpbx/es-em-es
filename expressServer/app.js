@@ -89,15 +89,15 @@ io.on('connection', (socket) => {
   // Handle disconnect
   socket.on('disconnect', () => {
     socket._user.clear();
-    phoneUser[data.phoneNumber].delete(socket._user);
+    phoneUser[socket._user.phoneNumber].delete(socket._user);
     delete socket._user;
   });
   socket.on('phoneNumber', (data) => {
     socket._user.phoneNumber = data.phoneNumber;
-    if (!phoneUser[data.PhoneNumber]) {
-      phoneUser[data.phoneNumber] = new Set();
+    if (!phoneUser[socket._user.phoneNumber]) {
+      phoneUser[socket._user.phoneNumber] = new Set();
     }
-    phoneUser[data.phoneNumber].add(socket._user);
+    phoneUser[socket._user.phoneNumber].add(socket._user);
 
     socket._user.loadMessages(-1);
   });
