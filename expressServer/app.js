@@ -5,6 +5,8 @@ var io = require('socket.io')(server);
 const telnyx = require('telnyx')('KEY016EC7DF1D08F8D9FEC2FCE0263B0811_LpK2t8vlrGx2TypnqsfrZz');
 const publicKey = "6JHIzNE/VcU3l6M6GJMhUaHURMJJIbRKL6CCE+e1QUg=";
 const router = Express.Router();
+
+// Define redis client.
 var redis = require('redis')
 const redisPass = 'yJLT6Moy66AwvFwusmkGgHRXzSmYoTHUVG7luqnDvlpHfF6tEYY5Lb4b5dmbWS4i31EsTXj3cUn07Rs71CvcVvIaTKa4p0KCln6q1dtsGwIzbSCVXHW9QIMMXlYBBHb0glGESweTUoM9dwNt7MbvVAmKNzjN2h719HLUhwGJfHagyPGgpxGEsepsLUGXRHv8VrswHXR6B1bI0LvngU92FfiCn0hxqiOALlS4JtIDIjdRYkASkfk5XqBBiPk7PI35';
 var redisClient = redis.createClient();
@@ -14,7 +16,6 @@ redisClient.on("error", function (err) {
 });
 
 // Receive webhooks from telnyx, and push them to sockets.
-const router = Express.Router();
 function addRawBody(req, res, next) {
   req.setEncoding('utf8');
 
