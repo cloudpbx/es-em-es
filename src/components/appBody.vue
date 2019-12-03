@@ -24,7 +24,7 @@ export default {
     connect: function () {
         console.log('socket connected')
     },
-    newMessage: function (data) {
+    receiveMessage: function (data) {
         console.log('New message recieved' + data.hello)
     }
   },
