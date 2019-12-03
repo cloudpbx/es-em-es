@@ -4,7 +4,7 @@
       <messageWindow :history="selectedPhoneHistory" style="position:absolute; left:0; top:0;"/>
     </v-container>
 
-    <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:0;" />
+    <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:5px;" />
   </div>
 </template>
 
@@ -24,19 +24,18 @@ export default {
   data() {
     return {
       text: null,
-      selectedNumber: '',
+      selectedNumber: ""
     };
   },
   computed: {
-    selectedPhoneHistory: function () {
+    selectedPhoneHistory: function() {
       return mockdata[this.selectedNumber];
     }
   },
   methods: {
     selectedConversation(n) {
       this.selectedNumber = n;
-    },
     }
-
+  }
 };
 </script>
