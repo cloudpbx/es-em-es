@@ -6,7 +6,7 @@
       style="position:absolute; left:0px; top:5px;"
     />
     <v-container class="grey lighten-5">
-      <messageWindow :history="selectedPhoneHistory" />
+      <messageWindow :history="selectedPhoneHistory" style="position:absolute; left:0; top:0;"/>
     </v-container>
 
     <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:5px;" />
