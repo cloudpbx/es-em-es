@@ -7,7 +7,13 @@
     />
     <v-container class="grey lighten-5">
       <messageWindow :history="selectedPhoneHistory" style="position:absolute; left:0; top:100px;" />
-      <messageInput style="position:absolute; left:0; bottom:0;"/>
+      <messageInput style="position:absolute; left:0; bottom:0;" />
+      <!-- <v-form @submit.prevent="test">
+        <v-text-field label="number" v-model="number"></v-text-field>
+        <v-text-field label="message" v-model="message"></v-text-field>
+
+        <v-btn color="gray" type="submit">Send</v-btn>
+      </v-form>-->
     </v-container>
 
     <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:5px;" />
@@ -35,7 +41,9 @@ export default {
     return {
       text: null,
       selectedNumber: "",
-      selected: false
+      selected: false,
+      message: null,
+      number: null
     };
   },
   computed: {
@@ -47,6 +55,12 @@ export default {
   methods: {
     selectedConversation(n) {
       this.selectedNumber = n;
+    },
+    test() {
+      this.$socket.emit("sendMessage", {
+        message: this.message,
+        number: this.number
+      });
     }
   },
   mounted() {
@@ -57,6 +71,25 @@ export default {
       });
     }
     console.log();
+  },
+  sockets: {
+    connect: () => {
+      console.log("socket connected");
+    },
+    loadMessages: messages => {
+      // TODO load messages into UI data store
+    },
+    receiveMessage: data => {
+      // console.log("New message recieved" + JSON.stringify(data));
+      console.log(`From | ${JSON.stringify(data.payload.from)}`);
+      console.log(`To | ${JSON.stringify(data.payload.to[0])}`);
+      console.log(`Sent At | ${JSON.stringify(data.payload.sent_at)}`);
+      console.log(`Received At | ${JSON.stringify(data.payload.received_at)}`);
+      console.log(`Message | ${JSON.stringify(data.payload.text)}`);
+    },
+    sentMessage: message => {
+      // TODO load sent message into UI data store
+    }
   }
 };
 </script>
