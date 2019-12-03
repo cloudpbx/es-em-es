@@ -94,7 +94,10 @@ io.on('connection', (socket) => {
   }).then(function(response){
     const message = response.data;
     socket.emit('sentMessage', message);
-  }).catch(error => console.log('Error in sending message: ' + JSON.stringify(error)))})
+  }).catch(error => {
+    console.log('Error in sending message: ' + JSON.stringify(error))
+    socket.emit('error', 'Failed to send message')
+  })})
 });
 
 class User {
