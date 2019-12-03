@@ -52,14 +52,11 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => 
     case 'message.finalized':
       redisClient.rpush('list1', JSON.stringify(event.data));
       io.sockets.emit('receiveMessage', event.data);
-      from = event.data.payload.from;
-      io.sockets.emit('receiveMessage:'+from, event.data);
 
     // Handle received messages.
     case 'message.received':
       redisClient.rpush('list1', JSON.stringify(event.data));
-      to = event.data.payload.to;
-      io.sockets.emit('receiveMessage:'+to, event.data);
+      io.sockets.emit('receiveMessage', event.data);
 
     // Lost and found.
     default:
