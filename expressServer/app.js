@@ -82,8 +82,8 @@ io.on('connection', (socket) => {
     socket._user.clear();
     delete socket._user;
   });
-  socket.on('phoneNumber', (phoneNumber) => {
-    socket._user.phoneNumber = phoneNumber;
+  socket.on('phoneNumber', (data) => {
+    socket._user.phoneNumber = data.phoneNumber;
     socket._user.loadMessages(-1);
   });
   socket.on('sendMessage', (data) => {
