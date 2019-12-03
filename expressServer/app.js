@@ -68,15 +68,27 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => 
 // Add webhook route to app.
 app.use(router);
 
+server.listen(8080, function() {
+  console.log('SMS App listening on port 8000!')
+});
 
-
-io.on('connection', function (socket) {
-  redisClient.lrange( "list1", 0, -1, (error, messages) => { // Load messages on connect
-    socket.emit('loadMessages', messages);
-  })
+// Manage connection/user
+io.on('connection', (socket) => {
+  console.log('New Connection');
+  // Empty user
+  socket._user = new User(socket);
+  // Handle disconnect
+  socket.on('disconnect', () => {
+    socket._user.clear();
+    delete socket._user;
+  });
+  socket.on('phoneNumber', (phoneNumber) => {
+    socket._user.phoneNumber = phoneNumber;
+    socket._user.loadMessages(-1);
+  });
   socket.on('sendMessage', (data) => {
     telnyx.messages.create({
-      'from': '+17786542857', // Your Telnyx number
+      'from': socket._user.phoneNumber , // Your Telnyx number
       'to': '+1' + data.number,
       'text': data.message
   }).then(function(response){
@@ -85,18 +97,104 @@ io.on('connection', function (socket) {
   }).catch(error => console.log('Error in sending message: ' + JSON.stringify(error)))})
 });
 
-server.listen(8000, function() {
-  console.log('SMS App listening on port 8000!')
-});
+class User {
+  /**
+   * Constructor for user
+   * @param {any} socket the socket for this user
+   */
+  constructor(socket) {
+    this.socket = socket;
+    this.clear();
+  }
+  /**
+   * Login function
+   * @param {Object} user_data the user data (kazoo_user, permissions, ...)
+   * @param {number} ttl the time to live for this login
+   */
+  login (user_data, ttl) {
+    this.clear();
+    // If it has user_data and ttl
+    if (user_data && ttl) {
+      // Complete the login
+      this.auth = true;
+      // Let the user know of the successful authentication
+      this.socket.emit('status', {
+        auth: true,
+        ttl: ttl,
+        permissions: this.permissions
+      });
+      // Prepare to logout the user
+      setTimeout(()=>{
+        this.logout(`Your key has expired`);
+      }, (ttl - 1) * 1000);
+    } else {
+      this.logout(`No login data`);
+    }
+  }
+  /**
+   * Logout function
+   * @param {string=} reason an optional reason for logging out the user
+   */
+  logout (reason) {
+    this.clear();
+    this.socket.emit('status', {
+      auth: false,
+      reason: (reason ? reason : false)
+    });
+  }
+  /**
+   * Clears the user (effectively a shadow logout)
+   */
+  clear () {
+    // If it has any active store
+    if (this.store_item) {
+      // For each store
+      for (let store of Object.keys(this.store_item)) {
+        // For each item
+        for (let i = this.store_item[store].length - 1; i >= 0; i--) {
+          stores[store].remove(this.store_item[store][i].key, this.store_item[store][i].uuid);
+        }
+      }
+    }
+    // Is not authenticated
+    this.auth = false;
+    this.kazoo = false
+    // Has no store_items
+    this.store_item = {}
+  }
+  /**
+   * Sends some data from a given channel to the user if the user is authenticated
+   * @param {string} channel channel to send to
+   * @param {any} data what to send
+   * @return {bool} true if the data was sent
+   */
+  send (channel, data) {
+    if (this.auth) {
+      this.socket.emit(channel, data);
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Adds and registers a store
+   * @param {string} store the name of the store
+   * @param {string} key the key to subscribe to
+   */
+  addStore (store, key) {
+    if (!this.store_item[store]) this.store_item[store] = [];
+    this.store_item[store].push({
+      key: key,
+      uuid: stores[store].add(key, this)
+    })
+  }
 
-// // initialize sessionMiddleware to handle different users connecting to the socket at the same time.
-// var sessionMiddleware = session({
-//   store: new RedisStore({}), // XXX redis server config
-//   secret: "keyboard cat",
-// })
-// // Socket-io connection stuff.
-// io.use(function(socket, next) {
-//   sessionMiddleware(socket.request, socket.request.res, next);
-// });
-// // Tell the sockets server to use the session middleware.
-// server.use(sessionMiddleware);
+  /**
+   * Grabs the most recent messages from redis.
+   * @param {int} numItems 
+   */
+  loadMessages(numItems) {
+    redisClient.lrange( this.phoneNumber, 0, numItems, (error, messages) => { // Load messages on connect
+      this.socket.emit('loadMessages', messages);
+    })
+  }
+}
