@@ -21,16 +21,19 @@ export default {
     };
   },
   sockets: {
-    connect: function () {
-        console.log('socket connected')
+    connect: function() {
+      console.log("socket connected");
     },
-    newMessage: function (data) {
-        console.log('New message recieved' + data.hello)
+    receiveMessage: function(data) {
+      console.log("New message recieved" + JSON.stringify(data));
     }
   },
   methods: {
     test() {
-      this.$socket.emit('sendMessage', {message: this.message, number: this.number})
+      this.$socket.emit("sendMessage", {
+        message: this.message,
+        number: this.number
+      });
     }
   }
 };
