@@ -88,6 +88,9 @@ export default {
       console.log(`Message | ${JSON.stringify(data.payload.text)}`);
     },
     sentMessage: message => {
+      console.log(message)
+    },
+    sentFinalized: message => {
       // TODO load sent message into UI data store
     }
   }

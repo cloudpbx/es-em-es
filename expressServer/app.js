@@ -49,14 +49,14 @@ router.post("/webhook/oV2KDfSKNQb1SRMGsRzJ", addRawBody, (request, response) => 
   switch (event.data.event_type) {
     // Handle sent messages.
     case 'message.sent':
+      return;
     case 'message.finalized':
       redisClient.rpush(event.data.payload.from + '|' + event.data.payload.to[0].phone_number, JSON.stringify(event.data));
-      io.sockets.emit('receiveMessage', event.data);
+      io.sockets.emit('sentFinalized', event.data);
     // Handle received messages.
     case 'message.received':
       redisClient.rpush(event.data.payload.to + '|' + event.data.payload.from.phone_number, JSON.stringify(event.data));
       io.sockets.emit('receiveMessage', event.data);
-
     // Lost and found.
     default:
         io.sockets.emit('receiveMessage:lost+found', event.data);
