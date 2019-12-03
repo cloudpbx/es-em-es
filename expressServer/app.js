@@ -84,8 +84,8 @@ io.on('connection', function (socket) {
       'text': data.message
   }).then(function(response){
     const message = response.data;
-    redisClient.rpush('list1', JSON.stringify(message))});
-  }).catch(error => console.log('Error in socket: ' + JSON.stringify(error)))
+    redisClient.rpush('list1', JSON.stringify(message))
+  }).catch(error => console.log('Error in sending message: ' + JSON.stringify(error)))})
 });
 
 server.listen(8000, function() {
