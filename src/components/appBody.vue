@@ -1,13 +1,7 @@
 <template >
   <div style="width:100%; height:100%">
     <v-container class="grey lighten-5">
-      <messageWindow :history="selectedPhoneHistory" />
-
-      <v-form @submit.prevent="test">
-        <v-text-field v-model="text"></v-text-field>
-
-        <v-btn color="gray" type="submit">Test</v-btn>
-      </v-form>
+      <messageWindow :history="selectedPhoneHistory" style="position:absolute; left:0; top:0;"/>
     </v-container>
 
     <contactList @selected="selectedConversation" style="position:absolute; right:250px; top:0;" />
