@@ -113,8 +113,10 @@ io.on("connection", socket => {
   // Handle disconnect
   socket.on("disconnect", () => {
     socket._user.clear();
-    phoneUser[socket._user.phoneNumber].delete(socket._user);
-    delete socket._user;
+    if (socket._user.phoneNumber & phoneUser[socket._user.phoneNumber]) {
+      phoneUser[socket._user.phoneNumber].delete(socket._user);
+      delete socket._user;
+    };
   });
   socket.on("phoneNumber", data => {
     socket._user.phoneNumber = data.phoneNumber;
