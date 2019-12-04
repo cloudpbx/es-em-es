@@ -133,7 +133,7 @@ io.on("connection", socket => {
     }
   });
   socket.on("sendMessage", data => {
-    console.log(socket._user.phoneNumber)
+    console.log("phoneNumber", socket._user.phoneNumber)
     telnyx.messages
       .create({
         from: socket._user.phoneNumber, // Your Telnyx number
@@ -141,12 +141,13 @@ io.on("connection", socket => {
         text: data.message
       })
       .then(function(response) {
-        if (response.data) {
         const message = response.data;
         socket.emit("sentMessage", message);
-        } else {
-          console.log(response)
-        }
+        console.log("then")
+      })
+      .catch(error => {
+        console.log("Error in sending message: " + JSON.stringify(error));
+        socket._user.send("error", "Failed to send message");
       })
   });
 });
