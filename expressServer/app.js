@@ -133,6 +133,7 @@ io.on("connection", socket => {
     }
   });
   socket.on("sendMessage", data => {
+    console.log(socket._user.phoneNumber)
     telnyx.messages
       .create({
         from: socket._user.phoneNumber, // Your Telnyx number
