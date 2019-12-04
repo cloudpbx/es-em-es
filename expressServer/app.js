@@ -118,6 +118,7 @@ io.on("connection", socket => {
   });
   socket.on("phoneNumber", data => {
     socket._user.phoneNumber = data.phoneNumber;
+    console.log(data.phoneNumber);
     if (!phoneUser[socket._user.phoneNumber]) {
       phoneUser[socket._user.phoneNumber] = new Set();
     }
@@ -144,7 +145,7 @@ io.on("connection", socket => {
       })
       .catch(error => {
         console.log("Error in sending message: " + JSON.stringify(error));
-        socket.emit("error", "Failed to send message");
+        socket._user.send("error", "Failed to send message");
       })
   });
 });
