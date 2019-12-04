@@ -150,7 +150,7 @@ io.on("connection", socket => {
       })
       .catch(error => {
         console.log("Error in sending message: " + JSON.stringify(error));
-        return socket._user.send("error", "Failed to send message");
+        socket._user.send("sendFailed", "Failed to send message");
       })
   });
 });

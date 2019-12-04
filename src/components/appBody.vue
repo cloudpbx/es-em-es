@@ -112,6 +112,9 @@ export default {
     },
     sentFinalized: message => {
       // TODO load sent message into UI data store
+    },
+    sendFailed: message => {
+      console.log(message)
     }
   }
 };
