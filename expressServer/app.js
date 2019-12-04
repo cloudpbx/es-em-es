@@ -140,13 +140,13 @@ io.on("connection", socket => {
         to: "+1" + data.number,
         text: data.message
       })
-      .then(function(response) {
-        const message = response.data;
-        socket.emit("sentMessage", message);
-      })
       .catch(error => {
         console.log("Error in sending message: " + JSON.stringify(error));
         socket._user.send("error", "Failed to send message");
+      })
+      .then(function(response) {
+        const message = response.data;
+        socket.emit("sentMessage", message);
       })
   });
 });
