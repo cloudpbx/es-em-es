@@ -141,14 +141,12 @@ io.on("connection", socket => {
         text: data.message
       })
       .then(function(response) {
+        if (response.data) {
         const message = response.data;
         socket.emit("sentMessage", message);
-      })
-      .catch(error => {
-        console.log("Error in sending message: " + JSON.stringify(error));
-        socket._user.send("error", "Failed to send message");
-      }).catch(error => {
-        console.log("second catch")
+        } else {
+          console.log("Empty response data.")
+        }
       })
   });
 });
