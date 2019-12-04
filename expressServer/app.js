@@ -117,6 +117,7 @@ io.on("connection", socket => {
       phoneUser[socket._user.phoneNumber].delete(socket._user);
       delete socket._user;
     };
+    console.log("Disconnected")
   });
   socket.on("phoneNumber", data => {
     socket._user.phoneNumber = data.phoneNumber;
