@@ -145,7 +145,7 @@ io.on("connection", socket => {
         const message = response.data;
         socket.emit("sentMessage", message);
         } else {
-          console.log("Empty response data.")
+          console.log(response)
         }
       })
   });
