@@ -146,7 +146,6 @@ io.on("connection", socket => {
         console.log("Error in sending message: " + JSON.stringify(error));
         socket.emit("error", "Failed to send message");
       })
-      .error("Error in sending message");
   });
 });
 
