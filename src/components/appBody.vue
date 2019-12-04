@@ -88,6 +88,9 @@ export default {
       });
     }
     console.log();
+    this.$socket.emit("phoneNumber", {
+        phoneNumber: "+17786542857",
+      });
   },
   sockets: {
     connect: () => {
