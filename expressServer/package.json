@@ -4,11 +4,13 @@
   "description": "test server",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "start": "node -r esm app.js"
   },
   "author": "Jason Lu",
   "license": "ISC",
   "dependencies": {
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "redis": "^2.8.0",
     "sequelize": "^5.21.2",

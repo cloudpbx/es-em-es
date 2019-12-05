@@ -1,54 +1,10 @@
 "use strict";
-
 const Express = require("express");
-
 const app = Express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server, { origins: "*:*" });
 const router = Express.Router();
-
-// Cockroach client
-var Sequelize = require('sequelize-cockroachdb');
-var sequelize = new Sequelize('polaris', 'esemes', '', {
-  dialect: 'postgres',
-  port: 26257,
-  logging: false
-});
-
-// Define the Sms model for the "polaris_sms" table.
-export var Sms = sequelize.define('polaris_sms', {
-  id: {
-      type: Sequelize.UUID,
-      primaryKey: true,
-  },
-  from_number: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-  },
-  to_number: {
-    type: Sequelize.TEXT,
-    allowNull: false,
-  },
-  body: {
-    type: Sequelize.TEXT,
-  },
-  data: {
-    type: Sequelize.JSONB,
-  },
-  created_at: {
-    type: Sequelize.TIMESTAMPTZ,
-    default: Sequelize.literal('NOW()'),
-    allowNull: false,
-  },
-  updated_at: {
-    type: Sequelize.TIMESTAMPTZ,
-    default: Sequelize.literal('NOW()'),
-    allowNull: false,
-  },
-  deleted_at: {
-    type: Sequelize.TIMESTAMPTZ,
-  },
-});
+import { Sms, createSms } from "./cockroach";
 
 // Define Telnyx stuff.
 const telnyx = require("telnyx")(
@@ -78,8 +34,7 @@ router.post(
   "/webhook/oV2KDfSKNQb1SRMGsRzJ",
   addRawBody,
   (request, response) => {
-    var event;
-    var phoneNumber;
+    let event;
     try {
       event = telnyx.webhooks.constructEvent(
         request.rawBody,
@@ -91,36 +46,46 @@ router.post(
       console.log("Error", e.message);
       return response.status(400).send("Webhook Error:" + e.message);
     }
-
     // Send the message to the right channel based on the from or to number and the event type.
+    const payload = event.data.payload;
+    let phoneNumber;
+    let correspondingWith;
+    const text = payload.text;
+    const id = payload.id;
     switch (event.data.event_type) {
       // Handle sent messages.
       case "message.sent":
-        return;
+        break;
       case "message.finalized":
-        phoneNumber = event.data.payload.from;
-        // redisClient.rpush(
-        //   phoneNumber + "|" + event.data.payload.to[0].phone_number,
-        //   JSON.stringify(event.data)
-        // );
-        if (phoneNumber) {
-          for (let user of phoneUser[phoneNumber]) {
-            user.send("sentFinalized", event.data);
+        phoneNumber = payload.from;
+        correspondingWith = payload.to[0].phone_number;
+        Sms.create(
+          createSms(id, phoneNumber, correspondingWith, text, payload)
+        ).then((sms) => {
+          if (phoneNumber) {
+            for (let user of phoneUser[phoneNumber]) {
+              user.send("sentFinalized", sms);
+            }
           }
-        }
+        }).catch((error) => {
+          console.log("Sent message. failed to persist to database!!!!")
+        })
         break;
       // Handle received messages.
       case "message.received":
-        phoneNumber = event.data.payload.to;
-        // redisClient.rpush(
-        //   phoneNumber + "|" + event.data.payload.from.phone_number,
-        //   JSON.stringify(event.data)
-        // );
-        if (phoneNumber) {
-          for (let user of phoneUser[phoneNumber]) {
-            user.send("receiveMessage", event.data);
+        phoneNumber = payload.to;
+        correspondingWith = payload.from.phone_number;
+        Sms.create(
+          createSms(id, phoneNumber, correspondingWith, text, payload)
+        ).then((sms) => {
+          if (phoneNumber) {
+            for (let user of phoneUser[phoneNumber]) {
+              user.send("receiveMessage", sms);
+            }
           }
-        }
+        }).catch((error) => {
+          console.log("Received message, failed to persist to database!!!!")
+        })
         break;
       // Lost and found.
       default:
@@ -134,9 +99,13 @@ router.post(
 // Add webhook route to app.
 app.use(router);
 
-server.listen(8000, function() {
-  console.log("SMS App listening on port 8000!");
-});
+Sms.sync().then(
+  () => {
+    server.listen(8000, function() {
+      console.log("SMS App listening on port 8000!");
+    });
+  }
+)
 
 // Manage connection/user
 io.on("connection", socket => {
@@ -283,14 +252,15 @@ class User {
    * @param {int} numItems
    */
   loadMessages(otherPhoneNumber, numItems) {
-    // redisClient.lrange(
-    //   this.phoneNumber + "|" + otherPhoneNumber,
-    //   0,
-    //   numItems,
-    //   (error, messages) => {
-    //     // Load messages on connect
-    //     this.socket.emit("getMessages" + "|" + otherPhoneNumber, messages);
-    //   }
-    // );
+    Sms.findAll({
+      where: {
+        from_number: this.phoneNumber,
+        to_number: otherPhoneNumber
+      }
+    }).then((messages) => {
+      this.socket.emit("messagesRetrieved", messages)
+    }).catch((error) => {
+      this.socket.emit("retrieveFailed", "Failed to retrieve message history")
+    })
   }
 }
