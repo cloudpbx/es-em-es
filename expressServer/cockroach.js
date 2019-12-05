@@ -1,6 +1,6 @@
 // Cockroach client
 var Sequelize = require('sequelize-cockroachdb');
-var sequelize = new Sequelize('polaris', 'esemes', '', {
+var sequelize = new Sequelize('polaris', 'root', '', {
   dialect: 'postgres',
   port: 26257,
   logging: false
