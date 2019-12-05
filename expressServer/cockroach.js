@@ -5,7 +5,7 @@ var sequelize = new Sequelize('polaris', 'root', '', {
   port: 26257,
   logging: false
 });
-
+export const Op = sequelize.Op;
 // Define the Sms model for the "polaris_sms" table.
 export const Sms = sequelize.define('polaris_sms', {
   id: {

@@ -4,7 +4,7 @@ const app = Express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server, { origins: "*:*" });
 const router = Express.Router();
-import { Sms, createSms } from "./cockroach";
+import { Sms, createSms, Op } from "./cockroach";
 
 // Define Telnyx stuff.
 const telnyx = require("telnyx")(
@@ -256,8 +256,12 @@ class User {
   loadMessages(otherPhoneNumber, numItems) {
     Sms.findAll({
       where: {
-        from_number: {$or: {$eq: this.phoneNumber, $eq: otherPhoneNumber}},
-        to_number: {$or: {$eq: this.phoneNumber, $eq: otherPhoneNumber}}
+        from_number: {
+          [Op.or]: [this.phoneNumber, otherPhoneNumber]
+        },
+        to_number: {
+          [Op.or]: [this.phoneNumber, otherPhoneNumber]
+        },
       }
     }).then((messages) => {
       console.log(messages);
