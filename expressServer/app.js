@@ -131,6 +131,7 @@ io.on("connection", socket => {
     }
     phoneUser[socket._user.phoneNumber].add(socket._user);
     socket._user.login(3600);
+    socket._user.loadMessages('+16043551695')
   });
   socket.on("getMessages", data => {
     if (data.otherPhoneNumber) {
@@ -255,10 +256,11 @@ class User {
   loadMessages(otherPhoneNumber, numItems) {
     Sms.findAll({
       where: {
-        from_number: this.phoneNumber,
-        to_number: otherPhoneNumber
+        from_number: {$or: {$eq: this.phoneNumber, $eq: otherPhoneNumber}},
+        to_number: {$or: {$eq: this.phoneNumber, $eq: otherPhoneNumber}}
       }
     }).then((messages) => {
+      console.log(messages);
       this.socket.emit("messagesRetrieved", messages)
     }).catch((error) => {
       this.socket.emit("retrieveFailed", "Failed to retrieve message history")
