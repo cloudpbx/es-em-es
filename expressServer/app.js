@@ -148,7 +148,6 @@ io.on("connection", socket => {
       .then(function(response) {
         const message = response.data;
         socket._user.send("sentMessage", message);
-        console.log("then")
       })
       .catch(error => {
         console.log("Error in sending message: " + JSON.stringify(error));
