@@ -15,6 +15,40 @@ var sequelize = new Sequelize('polaris', 'esemes', '', {
   logging: false
 });
 
+// Define the Sms model for the "polaris_sms" table.
+export var Sms = sequelize.define('polaris_sms', {
+  id: {
+      type: Sequelize.UUID,
+      primaryKey: true,
+  },
+  from_number: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
+  to_number: {
+    type: Sequelize.TEXT,
+    allowNull: false,
+  },
+  body: {
+    type: Sequelize.TEXT,
+  },
+  data: {
+    type: Sequelize.JSONB,
+  },
+  created_at: {
+    type: Sequelize.TIMESTAMPTZ,
+    default: Sequelize.literal('NOW()'),
+    allowNull: false,
+  },
+  updated_at: {
+    type: Sequelize.TIMESTAMPTZ,
+    default: Sequelize.literal('NOW()'),
+    allowNull: false,
+  },
+  deleted_at: {
+    type: Sequelize.TIMESTAMPTZ,
+  },
+});
 
 // Define Telnyx stuff.
 const telnyx = require("telnyx")(
@@ -144,7 +178,7 @@ io.on("connection", socket => {
       })
       .then(function(response) {
         const message = response.data;
-        socket.emit("sentMessage", message);
+        socket._user.send("sentMessage", message);
         console.log("then")
       })
       .catch(error => {
