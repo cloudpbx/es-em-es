@@ -68,6 +68,7 @@ router.post(
             }
           }
         }).catch((error) => {
+          console.log(JSON.stringify(error))
           console.log("Sent message. failed to persist to database!!!!")
         })
         break;
