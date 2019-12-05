@@ -7,15 +7,14 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server, { origins: "*:*" });
 const router = Express.Router();
 
-// Define redis client.
-var redis = require("redis");
-const redisPass =
-  "yJLT6Moy66AwvFwusmkGgHRXzSmYoTHUVG7luqnDvlpHfF6tEYY5Lb4b5dmbWS4i31EsTXj3cUn07Rs71CvcVvIaTKa4p0KCln6q1dtsGwIzbSCVXHW9QIMMXlYBBHb0glGESweTUoM9dwNt7MbvVAmKNzjN2h719HLUhwGJfHagyPGgpxGEsepsLUGXRHv8VrswHXR6B1bI0LvngU92FfiCn0hxqiOALlS4JtIDIjdRYkASkfk5XqBBiPk7PI35";
-const redisClient = redis.createClient();
-redisClient.auth(redisPass);
-redisClient.on("error", err => {
-  console.log("Error " + err);
+// Cockroach client
+var Sequelize = require('sequelize-cockroachdb');
+var sequelize = new Sequelize('polaris', 'esemes', '', {
+  dialect: 'postgres',
+  port: 26257,
+  logging: false
 });
+
 
 // Define Telnyx stuff.
 const telnyx = require("telnyx")(
@@ -66,10 +65,10 @@ router.post(
         return;
       case "message.finalized":
         phoneNumber = event.data.payload.from;
-        redisClient.rpush(
-          phoneNumber + "|" + event.data.payload.to[0].phone_number,
-          JSON.stringify(event.data)
-        );
+        // redisClient.rpush(
+        //   phoneNumber + "|" + event.data.payload.to[0].phone_number,
+        //   JSON.stringify(event.data)
+        // );
         if (phoneNumber) {
           for (let user of phoneUser[phoneNumber]) {
             user.send("sentFinalized", event.data);
@@ -79,10 +78,10 @@ router.post(
       // Handle received messages.
       case "message.received":
         phoneNumber = event.data.payload.to;
-        redisClient.rpush(
-          phoneNumber + "|" + event.data.payload.from.phone_number,
-          JSON.stringify(event.data)
-        );
+        // redisClient.rpush(
+        //   phoneNumber + "|" + event.data.payload.from.phone_number,
+        //   JSON.stringify(event.data)
+        // );
         if (phoneNumber) {
           for (let user of phoneUser[phoneNumber]) {
             user.send("receiveMessage", event.data);
@@ -250,14 +249,14 @@ class User {
    * @param {int} numItems
    */
   loadMessages(otherPhoneNumber, numItems) {
-    redisClient.lrange(
-      this.phoneNumber + "|" + otherPhoneNumber,
-      0,
-      numItems,
-      (error, messages) => {
-        // Load messages on connect
-        this.socket.emit("getMessages" + "|" + otherPhoneNumber, messages);
-      }
-    );
+    // redisClient.lrange(
+    //   this.phoneNumber + "|" + otherPhoneNumber,
+    //   0,
+    //   numItems,
+    //   (error, messages) => {
+    //     // Load messages on connect
+    //     this.socket.emit("getMessages" + "|" + otherPhoneNumber, messages);
+    //   }
+    // );
   }
 }
