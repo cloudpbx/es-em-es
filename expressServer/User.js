@@ -1,4 +1,4 @@
-
+import { Sms, Op } from "./cockroach";
 export default class User {
   /**
    * Constructor for user
