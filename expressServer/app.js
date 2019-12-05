@@ -48,8 +48,8 @@ router.post(
     }
     // Send the message to the right channel based on the from or to number and the event type.
     const payload = event.data.payload;
-    let phoneNumber;
-    let correspondingWith;
+    let fromNumber;
+    let toNumber;
     const text = payload.text;
     const id = payload.id;
     switch (event.data.event_type) {
@@ -57,13 +57,13 @@ router.post(
       case "message.sent":
         break;
       case "message.finalized":
-        phoneNumber = payload.from;
-        correspondingWith = payload.to[0].phone_number;
+        fromNumber = payload.from;
+        toNumber = payload.to[0].phone_number;
         Sms.create(
-          createSms(id, phoneNumber, correspondingWith, text, payload)
+          createSms(id, fromNumber, toNumber, text, payload)
         ).then((sms) => {
-          if (phoneNumber) {
-            for (let user of phoneUser[phoneNumber]) {
+          if (fromNumber) {
+            for (let user of phoneUser[fromNumber]) {
               user.send("sentFinalized", sms);
             }
           }
@@ -74,13 +74,13 @@ router.post(
         break;
       // Handle received messages.
       case "message.received":
-        phoneNumber = payload.to;
-        correspondingWith = payload.from.phone_number;
+        toNumber = payload.to;
+        fromNumber = payload.from.phone_number;
         Sms.create(
-          createSms(id, phoneNumber, correspondingWith, text, payload)
+          createSms(id, fromNumber, toNumber, text, payload)
         ).then((sms) => {
-          if (phoneNumber) {
-            for (let user of phoneUser[phoneNumber]) {
+          if (toNumber) {
+            for (let user of phoneUser[toNumber]) {
               user.send("receiveMessage", sms);
             }
           }
@@ -90,7 +90,8 @@ router.post(
         break;
       // Lost and found.
       default:
-        phoneNumber = null;
+        fromNumber = null;
+        toNumber = null;
         console.error("Unknown event type. Data: `%s`.", event.data);
     }
     response.status(200).send("Signed Webhook Received: " + event.data.id);
