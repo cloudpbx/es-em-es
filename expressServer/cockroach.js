@@ -23,6 +23,9 @@ export const Sms = sequelize.define('polaris_sms', {
   body: {
     type: Sequelize.TEXT,
   },
+  message_time: {
+    type: Sequelize.DATE
+  },
   data: {
     type: Sequelize.JSONB,
   },
@@ -32,11 +35,13 @@ export const Sms = sequelize.define('polaris_sms', {
 });
 
 export const createSms = (id, from, to, body, data) => {
+  let date = new Date(data.received_at);
   return {
     id: id,
     from_number: from,
     to_number: to,
     body: body,
+    message_time: date,
     data: data
   }
 }
