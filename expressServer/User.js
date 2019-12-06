@@ -62,7 +62,10 @@ export default class User {
         to_number: {
           [Op.or]: [this.phoneNumber, otherPhoneNumber]
         },
-      }
+      },
+      order: [
+        ['message_time', 'ASC']
+      ]
     }).then((messages) => {
       console.log(messages);
       this.socket.emit("messagesRetrieved", messages)
