@@ -117,7 +117,6 @@ io.on("connection", socket => {
   socket._user = new User(socket);
   // Handle disconnect
   socket.on("disconnect", () => {
-    socket._user.clear();
     if (socket._user.phoneNumber & phoneUser[socket._user.phoneNumber]) {
       phoneUser[socket._user.phoneNumber].delete(socket._user);
       delete socket._user;
