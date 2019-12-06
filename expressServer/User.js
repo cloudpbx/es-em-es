@@ -6,7 +6,6 @@ export default class User {
    */
   constructor(socket) {
     this.socket = socket;
-    this.clear();
   }
   /**
    * Login function
@@ -14,7 +13,6 @@ export default class User {
    * @param {number} ttl the time to live for this login
    */
   login(ttl) {
-    this.clear();
     // Complete the login
     this.auth = true;
     // Let the user know of the successful authentication
@@ -33,7 +31,6 @@ export default class User {
    * @param {string=} reason an optional reason for logging out the user
    */
   logout(reason) {
-    this.clear();
     this.socket.emit("status", {
       auth: false,
       reason: reason ? reason : false
