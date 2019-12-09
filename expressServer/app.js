@@ -60,34 +60,34 @@ router.post(
       case "message.finalized":
         fromNumber = payload.from;
         toNumber = payload.to[0].phone_number;
-        Sms.create(
-          createSms(id, fromNumber, toNumber, text, payload)
-        ).then((sms) => {
-          if (fromNumber) {
-            for (let user of phoneUser[fromNumber]) {
-              user.send("sentFinalized", sms);
+        Sms.create(createSms(id, fromNumber, toNumber, text, payload))
+          .then(sms => {
+            if (fromNumber) {
+              for (let user of phoneUser[fromNumber]) {
+                user.send("sentFinalized", sms);
+              }
             }
-          }
-        }).catch((error) => {
-          console.log(JSON.stringify(error))
-          console.log("Sent message. failed to persist to database!!!!")
-        })
+          })
+          .catch(error => {
+            console.log(JSON.stringify(error));
+            console.log("Sent message. failed to persist to database!!!!");
+          });
         break;
       // Handle received messages.
       case "message.received":
         toNumber = payload.to;
         fromNumber = payload.from.phone_number;
-        Sms.create(
-          createSms(id, fromNumber, toNumber, text, payload)
-        ).then((sms) => {
-          if (toNumber) {
-            for (let user of phoneUser[toNumber]) {
-              user.send("receiveMessage", sms);
+        Sms.create(createSms(id, fromNumber, toNumber, text, payload))
+          .then(sms => {
+            if (toNumber) {
+              for (let user of phoneUser[toNumber]) {
+                user.send("receiveMessage", sms);
+              }
             }
-          }
-        }).catch((error) => {
-          console.log("Received message, failed to persist to database!!!!")
-        })
+          })
+          .catch(error => {
+            console.log("Received message, failed to persist to database!!!!");
+          });
         break;
       // Lost and found.
       default:
@@ -102,13 +102,11 @@ router.post(
 // Add webhook route to app.
 app.use(router);
 
-Sms.sync().then(
-  () => {
-    server.listen(8000, function() {
-      console.log("SMS App listening on port 8000!");
-    });
-  }
-)
+Sms.sync().then(() => {
+  server.listen(8000, function() {
+    console.log("SMS App listening on port 8000!");
+  });
+});
 
 // Manage connection/user
 io.on("connection", socket => {
@@ -120,8 +118,8 @@ io.on("connection", socket => {
     if (socket._user.phoneNumber & phoneUser[socket._user.phoneNumber]) {
       phoneUser[socket._user.phoneNumber].delete(socket._user);
       delete socket._user;
-    };
-    console.log("Disconnected")
+    }
+    console.log("Disconnected");
   });
   socket.on("phoneNumber", data => {
     socket._user.phoneNumber = data.phoneNumber;
@@ -131,7 +129,7 @@ io.on("connection", socket => {
     }
     phoneUser[socket._user.phoneNumber].add(socket._user);
     socket._user.login(3600);
-    socket._user.loadMessages('+16043551695')
+    socket._user.loadMessages("+17789916882");
   });
   socket.on("getMessages", data => {
     if (data.otherPhoneNumber) {
@@ -141,7 +139,7 @@ io.on("connection", socket => {
     }
   });
   socket.on("sendMessage", data => {
-    console.log("phoneNumber", socket._user.phoneNumber)
+    console.log("phoneNumber", socket._user.phoneNumber);
     telnyx.messages
       .create({
         from: socket._user.phoneNumber, // Your Telnyx number
@@ -155,7 +153,6 @@ io.on("connection", socket => {
       .catch(error => {
         console.log("Error in sending message: " + JSON.stringify(error));
         socket._user.send("sendFailed", "Failed to send message");
-      })
+      });
   });
 });
-
