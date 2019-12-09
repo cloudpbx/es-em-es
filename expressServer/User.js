@@ -67,7 +67,6 @@ export default class User {
         ['message_time', 'ASC']
       ]
     }).then((messages) => {
-      console.log(messages);
       this.socket.emit("messagesRetrieved", messages)
     }).catch((error) => {
       this.socket.emit("retrieveFailed", "Failed to retrieve message history")
