@@ -81,7 +81,9 @@ router.post(
           .then(sms => {
             if (toNumber) {
               for (let user of phoneUser[toNumber]) {
-                user.send("receiveMessage", sms);
+                if (user.phoneNumber === toNumber) {
+                  user.send("receiveMessage", sms);
+                }
               }
             }
           })
